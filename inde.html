@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simulasi Krisis</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #eef2f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      h2 {
+        text-align: center;
+      }
+      input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      #home, #simulation, #result {
+        display: none;
+      }
+      .scenario {
+        background: #f9f9f9;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 5px solid #e74c3c;
+      }
+      .options button {
+        margin-top: 10px;
+        display: block;
+        width: 100%;
+      }
+      .score {
+        font-size: 18px;
+        text-align: center;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="login">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Masuk</button>
+      <p id="error" style="color:red;"></p>
+    </div>
+
+    <div class="container" id="home">
+      <h2>Beranda</h2>
+      <p>Selamat datang di Aplikasi Simulasi Krisis!</p>
+      <button onclick="startSimulation()">Mulai Simulasi</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container" id="simulation">
+      <h2>Simulasi Krisis</h2>
+      <div class="scenario" id="scenarioText"></div>
+      <div class="options" id="optionButtons"></div>
+      <button onclick="goHome()">Kembali ke Beranda</button>
+    </div>
+
+    <div class="container" id="result">
+      <h2>Hasil Simulasi</h2>
+      <p class="score" id="finalScore"></p>
+      <button onclick="goHome()">Kembali ke Beranda</button>
+    </div>
+
+    <script>
+      function login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (username !== "" && password !== "") {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("home").style.display = "block";
+        } else {
+          document.getElementById("error").innerText = "Harap isi username dan password!";
+        }
+      }
+
+      function logout() {
+        document.getElementById("home").style.display = "none";
+        document.getElementById("login").style.display = "block";
+      }
+
+      function goHome() {
+        document.getElementById("simulation").style.display = "none";
+        document.getElementById("result").style.display = "none";
+        document.getElementById("home").style.display = "block";
+      }
+
+      const scenarios = [
+        {
+          text: "Gempa bumi besar melanda kota. Apa tindakan pertama Anda?",
+          options: [
+            { text: "Evakuasi warga ke tempat aman", correct: true },
+            { text: "Menunggu bantuan datang", correct: false },
+            { text: "Membuka siaran televisi", correct: false }
+          ]
+        },
+        {
+          text: "Terjadi kebakaran hebat di pusat perbelanjaan.",
+          options: [
+            { text: "Hubungi pemadam kebakaran", correct: true },
+            { text: "Ambil video untuk dokumentasi", correct: false },
+            { text: "Mengabaikan situasi", correct: false }
+          ]
+        },
+        {
+          text: "Banjir bandang terjadi setelah hujan deras selama 3 hari.",
+          options: [
+            { text: "Segera pindahkan warga ke tempat tinggi", correct: true },
+            { text: "Menunggu instruksi pemerintah", correct: false },
+            { text: "Membiarkan warga tetap di rumah", correct: false }
+          ]
+        },
+        {
+          text: "Wabah penyakit menyebar di lingkungan sekitar.",
+          options: [
+            { text: "Isolasi area terdampak dan beri edukasi", correct: true },
+            { text: "Biarkan warga beraktivitas seperti biasa", correct: false },
+            { text: "Sembunyikan informasi agar tidak panik", correct: false }
+          ]
+        },
+        {
+          text: "Terjadi ledakan gas di daerah pemukiman.",
+          options: [
+            { text: "Evakuasi dan tutup jalur gas", correct: true },
+            { text: "Lihat lebih dekat ledakannya", correct: false },
+            { text: "Update status di media sosial", correct: false }
+          ]
+        }
+      ];
+
+      let currentScenario = 0;
+      let score = 0;
+
+      function startSimulation() {
+        document.getElementById("home").style.display = "none";
+        document.getElementById("simulation").style.display = "block";
+        currentScenario = 0;
+        score = 0;
+        showScenario();
+      }
+
+      function showScenario() {
+        const scenario = scenarios[currentScenario];
+        document.getElementById("scenarioText").innerText = scenario.text;
+        const optionsDiv = document.getElementById("optionButtons");
+        optionsDiv.innerHTML = "";
+
+        scenario.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.innerText = option.text;
+          btn.onclick = () => selectOption(option.correct);
+          optionsDiv.appendChild(btn);
+        });
+      }
+
+      function selectOption(correct) {
+        if (correct) {
+          score++;
+          alert("✅ Pilihan tepat!");
+        } else {
+          alert("❌ Pilihan kurang tepat.");
+        }
+
+        currentScenario++;
+        if (currentScenario < scenarios.length) {
+          showScenario();
+        } else {
+          showResult();
+        }
+      }
+
+      function showResult() {
+        document.getElementById("simulation").style.display = "none";
+        document.getElementById("result").style.display = "block";
+
+        const total = scenarios.length;
+        const percent = Math.round((score / total) * 100);
+        let message = `Skor Anda: ${score} dari ${total} (${percent}%)\n`;
+
+        if (percent === 100) {
+          message += "🌟 Luar biasa! Anda sangat siap menghadapi krisis.";
+        } else if (percent >= 60) {
+          message += "👍 Cukup baik! Tapi tetap perlu latihan.";
+        } else {
+          message += "⚠️ Anda perlu memahami tanggap darurat lebih dalam.";
+        }
+
+        document.getElementById("finalScore").innerText = message;
+      }
+    </script>
+  </body>
+</html>
